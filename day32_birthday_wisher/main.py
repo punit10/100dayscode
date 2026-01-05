@@ -1,6 +1,8 @@
 ##################### Normal Starting Project ######################
 import datetime as dt
 import pandas
+import random
+import smtplib
 
 # 1. Update the birthdays.csv with your friends & family's details. 
 # HINT: Make sure one of the entries matches today's date for testing purposes. e.g.
@@ -10,16 +12,33 @@ import pandas
 # 2. Check if today matches a birthday in the birthdays.csv
 # HINT 1: Create a tuple from today's month and day using datetime. e.g.
 # today = (today_month, today_day)
+my_email = "vectorcampus1@gmail.com"
+password = input("Input details for sender email: ")
 birthday_df = pandas.read_csv("birthdays.csv")
-birthdays_dict = {(row.month, row.day): row for (index, row) in birthday_df.iterrows()}
-print(birthdays_dict)
+birthdays_dict = {(data_row.month, data_row.day): data_row for (index, data_row) in birthday_df.iterrows()}
+# print(birthdays_dict)
 
 now = dt.datetime.now()
 today = (now.month, now.day)
 
-matching_date = (1, 2)
-if today == matching_date:
-    print(matching_date)
+if today in birthdays_dict:
+    birthday_name = birthdays_dict[today]
+    letter_choice = random.randint(1, 3)
+    file_path = f"./letter_templates/letter_{letter_choice}.txt"
+    with open(file_path) as letter_file:
+        contents = letter_file.read()
+        personalized_letter = contents.replace("[NAME]", birthday_name["name"])
+        print(birthday_name["name"])
+        print(personalized_letter)
+    with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+        connection.starttls()
+        connection.login(user=my_email, password=password)
+        connection.sendmail(
+            from_addr=my_email,
+            to_addrs=birthday_name["email"],
+            msg=f"Subject: Happy Birthday!! \n\n {personalized_letter}"
+        )
+
 
 # HINT 2: Use pandas to read the birthdays.csv
 
