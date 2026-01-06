@@ -28,8 +28,8 @@ if today in birthdays_dict:
     with open(file_path) as letter_file:
         contents = letter_file.read()
         personalized_letter = contents.replace("[NAME]", birthday_name["name"])
-        print(birthday_name["name"])
-        print(personalized_letter)
+        # print(birthday_name["name"])
+        # print(personalized_letter)
     with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
         connection.starttls()
         connection.login(user=my_email, password=password)
