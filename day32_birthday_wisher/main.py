@@ -13,7 +13,7 @@ import smtplib
 # HINT 1: Create a tuple from today's month and day using datetime. e.g.
 # today = (today_month, today_day)
 my_email = "vectorcampus1@gmail.com"
-password = input("Input details for sender email: ")
+password = input("Input details for sender email:   ")
 birthday_df = pandas.read_csv("birthdays.csv")
 birthdays_dict = {(data_row.month, data_row.day): data_row for (index, data_row) in birthday_df.iterrows()}
 # print(birthdays_dict)
