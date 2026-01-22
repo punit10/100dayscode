@@ -1,5 +1,6 @@
 import os
 import requests
+from twilio.rest import Client
 STOCK_NAME = "TSLA"
 COMPANY_NAME = "Tesla Inc"
 
@@ -13,6 +14,8 @@ stock_params = {
     "symbol": STOCK_NAME,
     "apikey": STOCK_KEY,
 }
+account_sid = os.environ.get("TWILIO_ACC_SID")
+auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
 
 ## STEP 1: Use https://www.alphavantage.co/documentation/#daily
 # When stock price increase/decreases by 5% between yesterday and the day before yesterday then print("Get News").
@@ -38,7 +41,7 @@ percent_diff = diff * 100 / float(before_yesterday_closing)
 print(round(percent_diff, 2))
 
 #TODO 5. - If TODO4 percentage is greater than 5 then print("Get News").
-if diff > 1:
+if percent_diff > 5:
     print("Get News")
     ## STEP 2: https://newsapi.org/ 
     # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
@@ -57,21 +60,26 @@ news_data = response.json()
 
 #TODO 7. - Use Python slice operator to create a list that contains the first 3 articles. Hint: https://stackoverflow.com/questions/509211/understanding-slice-notation
 news_articles = news_data["articles"][0:3]
-# print(f"Headline: {news_articles[0]["title"]} \n"
-#       f"Brief: {news_articles[0]["description"]} \n"
-#       f"Read More at {news_articles[0]["url"]}")
-
 
 ## STEP 3: Use twilio.com/docs/sms/quickstart/python
 #to send a separate message with each article's title and description to your phone number.
 
 #TODO 8. - Create a new list of the first 3 article's headline and description using list comprehension.
-top_three = [f"Headline: {item["title"]} \n"
+top_three = [f"{news_params["q"]}: {percent_diff}\n Headline: {item["title"]}\n"
       f"Brief: {item["description"]} \n"
-      f"Read More at {item["url"]}" for item in news_articles]
+      f"Read More at {item["url"]}\n\n" for item in news_articles]
 print(top_three)
 
-#TODO 9. - Send each article as a separate message via Twilio. 
+#TODO 9. - Send each article as a separate message via Twilio.
+for article in top_three:
+    client = Client(account_sid, auth_token)
+
+    message = client.messages.create(
+        body=f"{article}",
+        from_="+15017122000",  # number you got in twilio
+        to="+15558675310",  # The number registered with twilio
+    )
+    print(message.body)
 
 
 

@@ -6,8 +6,8 @@ my_long = -80.782127
 
 OWM_ENDPOINT = "https://api.openweathermap.org/data/2.5/forecast"
 OWM_API = os.environ.get("OWM_API")
-account_sid = os.environ["TWILIO_ACC_SID"]
-auth_token = os.environ["TWILIO_AUTH_TOKEN"]
+account_sid = os.environ.get("TWILIO_ACC_SID")
+auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
 
 print(OWM_API)
 
