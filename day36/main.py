@@ -6,7 +6,7 @@ COMPANY_NAME = "Tesla Inc"
 
 STOCK_ENDPOINT = "https://www.alphavantage.co/query"
 NEWS_ENDPOINT = "https://newsapi.org/v2/everything"
-NEWS_API = os.environ.get("STOCK_KEY")
+NEWS_API = os.environ.get("NEWS_API_KEY")
 
 STOCK_KEY = os.environ.get("STOCK_KEY")
 stock_params = {
