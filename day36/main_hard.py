@@ -25,10 +25,15 @@ stock_list = [value for (key, value) in stock_data["Time Series (Daily)"].items(
 # print(stock_list)
 yesterday_closing = stock_list[0]["4. close"]
 before_yesterday_closing = stock_list[1]["4. close"]
-diff = abs(float(yesterday_closing) - float(before_yesterday_closing))
-print(diff)
+diff = float(yesterday_closing) - float(before_yesterday_closing)
+# print(diff)
+is_up_down = None
+if diff > 0:
+    is_up_down = "🔼"
+else:
+    is_up_down = "🔻"
 
-percent_diff = diff * 100 / float(before_yesterday_closing)
+percent_diff = abs(diff) * 100 / float(before_yesterday_closing)
 percent_diff = round(percent_diff, 2)
 
 def get_three_articles()-> list:
@@ -39,12 +44,12 @@ def get_three_articles()-> list:
         "sortBy": "popularity",
         "apiKey": NEWS_API
     }
-    response = requests.get(NEWS_ENDPOINT, params=news_params, verify=False)
-    response.raise_for_status()
-    news_data = response.json()
+    news_response = requests.get(NEWS_ENDPOINT, params=news_params, verify=False)
+    news_response.raise_for_status()
+    news_data = news_response.json()
     news_articles = news_data["articles"][0:3]
 
-    top_three = [f"{news_params["q"]}: {percent_diff}\n Headline: {item["title"]}\n"
+    top_three = [f"{news_params["q"]}: {is_up_down}{percent_diff}% \nHeadline: {item["title"]}\n"
                  f"Brief: {item["description"]} \n"
                  f"Read More at {item["url"]}\n\n" for item in news_articles]
     # print(top_three)
