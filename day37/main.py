@@ -38,15 +38,15 @@ pixel_endpoint = f"{PIXELA_ENDPOINT}/{USERNAME}/graphs/{GRAPH_ID}"
 today = datetime.now()
 pixel_config = {
     "date": today.strftime("%Y%m%d"),
-    "quantity": "3.0"
+    "quantity": input("How many Kms did you walk today? "),
 }
-# response = requests.post(
-#     url=pixel_endpoint,
-#     json=pixel_config,
-#     headers=headers,
-#     verify=False
-# )
-# print(response.text)
+response = requests.post(
+    url=pixel_endpoint,
+    json=pixel_config,
+    headers=headers,
+    verify=False
+)
+print(response.text)
 
 # post_multiple_endpoint = f"{PIXELA_ENDPOINT}/{USERNAME}/graphs/{GRAPH_ID}/pixels"
 # post_data = [{
@@ -78,18 +78,18 @@ update_endpoint = f"{PIXELA_ENDPOINT}/{USERNAME}/graphs/{GRAPH_ID}/{date_to_upda
 update_config = {
     "quantity": "2.0"
 }
-response = requests.put(
-    url=update_endpoint,
-    json=update_config,
-    headers=headers,
-    verify=False
-)
-print(response.text)
+# response = requests.put(
+#     url=update_endpoint,
+#     json=update_config,
+#     headers=headers,
+#     verify=False
+# )
+# print(response.text)
 
 
 delete_endpoint = f"{PIXELA_ENDPOINT}/{USERNAME}/graphs/{GRAPH_ID}/{date_to_update}"
-response = requests.delete(
-    url=delete_endpoint,
-    headers=headers,
-)
+# response = requests.delete(
+#     url=delete_endpoint,
+#     headers=headers,
+# )
 print(response.text)
