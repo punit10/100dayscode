@@ -2,11 +2,11 @@ import requests
 import os
 from datetime import datetime
 USERNAME = "punitsharma"
-TOKEN = os.environ.get("PIXELA_TOKEN")
+PIXELA_TOKEN = os.environ.get("PIXELA_TOKEN")
 PIXELA_ENDPOINT = "https://pixe.la/v1/users"
 GRAPH_ID = "graph1"
 user_params = {
-    "token": TOKEN,
+    "token": PIXELA_TOKEN,
     "username": USERNAME,
     "agreeTermsOfService": "yes",
     "notMinor": "yes"
@@ -23,7 +23,7 @@ graph_config = {
     "color": "momiji"
 }
 headers = {
-    "X-USER-TOKEN": TOKEN,
+    "X-USER-TOKEN": PIXELA_TOKEN,
 }
 
 # response = requests.post(url=graph_endpoint,
