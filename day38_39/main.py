@@ -1,17 +1,22 @@
-from enum import verify
-
 import requests
+import os
 
+EXERCISE_APP_ID = os.environ.get("EXERCISE_APP_ID")
+EXERCISE_API_KEY = os.environ.get("EXERCISE_API_KEY")
+AGE = 30
+GENDER = "male"
+WEIGHT_KG = 70
+HEIGHT_CM = 167
 headers = {
-    "x-app-id": "app_edbed308d1914248b5e01566",
-    "x-app-key": "nix_live_YDZ3WSmPfaHNLVw5dvJQ0Xf9fytyHC7D"
+    "x-app-id": EXERCISE_APP_ID,
+    "x-app-key": EXERCISE_API_KEY
 }
 query = {
     "query": input("What exercise you have done today? "),
-    "weight_kg": 70,
-    "height_cm": 175,
-    "age": 30,
-    "gender": "male"
+    "weight_kg": WEIGHT_KG,
+    "height_cm": HEIGHT_CM,
+    "age": AGE,
+    "gender": GENDER
 }
 
 BASE_ENDPOINT = "https://app.100daysofpython.dev"
