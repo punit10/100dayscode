@@ -3,6 +3,8 @@ import os
 
 EXERCISE_APP_ID = os.environ.get("EXERCISE_APP_ID")
 EXERCISE_API_KEY = os.environ.get("EXERCISE_API_KEY")
+EXERCISE_APP_ID = "app_edbed308d1914248b5e01566"
+EXERCISE_API_KEY = "nix_live_YDZ3WSmPfaHNLVw5dvJQ0Xf9fytyHC7D"
 AGE = 30
 GENDER = "male"
 WEIGHT_KG = 70
