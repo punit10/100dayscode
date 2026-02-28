@@ -5,6 +5,8 @@ import random
 import datetime
 import requests
 
+from day33.main import response
+
 app = Flask(__name__)
 year = datetime.datetime.now().year
 
@@ -30,6 +32,15 @@ def guess(name):
                            name=name,
                            guessed_age = guessed_age,
                            guessed_gender = guessed_gender,
+                           year=year)
+
+@app.route("/blog")
+def get_blog():
+    blog_url = "https://api.npoint.io/c790b4d5cab58020d391"
+    response = requests.get(blog_url, verify=False)
+    blog_data = response.json()
+    return render_template("blog.html",
+                           blog_data=blog_data,
                            year=year)
 
 if __name__ == "__main__":

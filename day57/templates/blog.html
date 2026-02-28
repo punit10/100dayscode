@@ -6,12 +6,14 @@
     <title>Guess</title>
 </head>
 <body>
-    <h1>Hello {{ name.title() }}</h1>
-    <h2>I guess you are {{ guessed_age }} years</h2>
-    <h2>and you are {{ guessed_gender }} </h2>
+    <h1>Blogs</h1>
     <h3><a href="{{ url_for('index') }}">Home</a></h3>
-    <h3><a href="{{ url_for('get_blog') }}">Blog </a></h3>
-
+    <h3><a href="{{ url_for('guess', name='rohan') }}">Guess</a></h3>
+    {% for blog_post in blog_data %}
+        <h1> {{ blog_post["title"] }}</h1>
+        <h2> {{ blog_post["subtitle"] }}</h2>
+        <p>{{ blog_post["body"] }}</p>
+    {% endfor %}
 </body>
 <footer>
     <p>© {{ year }} Built with Love by Punit Sharma</p>
