@@ -1,11 +1,7 @@
-from enum import verify
-
 from flask import Flask, render_template
 import random
 import datetime
 import requests
-
-from day33.main import response
 
 app = Flask(__name__)
 year = datetime.datetime.now().year
