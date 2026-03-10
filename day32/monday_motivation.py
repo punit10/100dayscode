@@ -11,7 +11,7 @@ if weekday == 2:
     with open("quotes.txt") as quotes_file:
         all_quotes = quotes_file.readlines()
         quote = random.choice(all_quotes)
-        print(quote)
+        # print(quote)
         with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
             connection.starttls()
             connection.login(user=MY_EMAIL, password=MY_PASS)
