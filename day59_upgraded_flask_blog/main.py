@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+import smtplib
 from datetime import datetime
 import requests
 app = Flask(__name__)
@@ -34,11 +35,37 @@ def about():
     return render_template("about.html", year=datetime.now().year,
                            page_title=page_title)
 
-@app.route("/contact")
+@app.route("/contact", methods=('GET', 'POST'))
 def contact():
-    page_title = "Contact"
-    return render_template("contact.html", year=datetime.now().year,
+    page_title = "Contact Us"
+    if request.method == "POST":
+        form_data = request.form
+        send_email(name=form_data.get("name"),
+                   email=form_data.get("email"),
+                   phone=form_data.get("phone"),
+                   message=form_data.get("message")
+                   )
+        return render_template("contact.html",
+                               is_email_sent=True)
+    return render_template("contact.html",
+                           year=datetime.now().year,
+                           is_email_sent=False,
                            page_title=page_title)
+
+def send_email(name, email, phone, message):
+    my_email = ""
+    my_password = "XXXXXXXXXXXXX"
+    email_body = (f"Subject:New Message - Peak Performance from {name} \n\n"
+                  f"Name: {name}\n"
+                  f"Email: {email}\n"
+                  f"Phone: {phone}\n"
+                  f"Message:{message}")
+    # print(email_body)
+    with smtplib.SMTP("smtp.gmail.com") as connection:
+        connection.starttls()
+        connection.login(my_email, my_password)
+        connection.sendmail(my_email, my_email, email_body)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
