@@ -16,7 +16,7 @@
             <tr>
               {% for item in cafe %}
                 {% if "http" in item %}
-                <td><a href="{{ cafe }}">Maps Link</a></td>
+                <td><a href="{{ item }}">Maps Link</a></td>
                 {% else %}
                 <td>{{ item }}</td>
                 {% endif %}
