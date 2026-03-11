@@ -37,7 +37,7 @@ class CafeForm(FlaskForm):
                                choices=['✘', '☕️', '☕️☕️', '☕️☕️☕️', '☕️☕️☕️☕️', '☕️☕️☕️☕️☕️'])
     wifi_rating = SelectField('WiFi rating',
                               validators=[DataRequired()],
-                              choices=['✘', '💪', '💪💪', '💪💪💪', '💪💪💪💪💪', '💪💪💪💪💪'])
+                              choices=['✘', '💪', '💪💪', '💪💪💪', '💪💪💪💪', '💪💪💪💪💪'])
     power_rating = SelectField('Power Availability',
                                validators=[DataRequired()],
                                choices=['✘', '🔌', '🔌🔌', '🔌🔌🔌', '🔌🔌🔌🔌', '🔌🔌🔌🔌🔌'])
