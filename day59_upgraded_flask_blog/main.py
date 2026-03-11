@@ -46,7 +46,10 @@ def contact():
                    message=form_data.get("message")
                    )
         return render_template("contact.html",
-                               is_email_sent=True)
+                               year=datetime.now().year,
+                               is_email_sent=True,
+                               page_title=page_title
+                               )
     return render_template("contact.html",
                            year=datetime.now().year,
                            is_email_sent=False,
@@ -61,11 +64,15 @@ def send_email(name, email, phone, message):
                   f"Phone: {phone}\n"
                   f"Message:{message}")
     # print(email_body)
-    with smtplib.SMTP("smtp.gmail.com") as connection:
-        connection.starttls()
-        connection.login(my_email, my_password)
-        connection.sendmail(my_email, my_email, email_body)
-
+    try:
+        with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+            connection.starttls()
+            connection.login(my_email, my_password)
+            connection.sendmail(to_addrs=my_email,
+                                from_addr=my_email,
+                                msg=email_body)
+    except Exception as error:
+        print(f"Something went Wrong {error}")
 
 if __name__ == "__main__":
     app.run(debug=True)
