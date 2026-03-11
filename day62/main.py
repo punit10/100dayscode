@@ -1,8 +1,8 @@
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap5
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, SelectField
+from wtforms.validators import DataRequired, URL
 import csv
 
 '''
@@ -25,6 +25,22 @@ bootstrap = Bootstrap5(app)
 
 class CafeForm(FlaskForm):
     cafe = StringField('Cafe name', validators=[DataRequired()])
+    location_url = StringField('Location',
+                               validators=[
+                                   DataRequired(),
+                                   URL(message='Please enter a valid URL'),
+                               ])
+    open_time = StringField('Opening time', validators=[DataRequired()])
+    closing_time = StringField('Closing time', validators=[DataRequired()])
+    coffe_rating = SelectField('Coffe rating',
+                               validators=[DataRequired()],
+                               choices=['✘', '☕️', '☕️☕️', '☕️☕️☕️', '☕️☕️☕️☕️', '☕️☕️☕️☕️☕️'])
+    wifi_rating = SelectField('WiFi rating',
+                              validators=[DataRequired()],
+                              choices=['✘', '💪', '💪💪', '💪💪💪', '💪💪💪💪💪', '💪💪💪💪💪'])
+    power_rating = SelectField('Power Availability',
+                               validators=[DataRequired()],
+                               choices=['✘', '🔌', '🔌🔌', '🔌🔌🔌', '🔌🔌🔌🔌', '🔌🔌🔌🔌🔌'])
     submit = SubmitField('Submit')
 
 # Exercise:
@@ -42,11 +58,22 @@ def home():
     return render_template("index.html")
 
 
-@app.route('/add')
+@app.route('/add', methods=['GET', 'POST'])
 def add_cafe():
     form = CafeForm()
     if form.validate_on_submit():
-        print("True")
+        print(form.validate_on_submit())
+        cafe_details = (f"\n{form.cafe.data}, "
+                        f"{form.location_url.data}, "
+                        f"{form.open_time.data}, "
+                        f"{form.closing_time.data}, "
+                        f"{form.coffe_rating.data}, "
+                        f"{form.wifi_rating.data}, "
+                        f"{form.power_rating.data}")
+        print(cafe_details)
+        with open('cafe-data.csv', 'a', encoding='utf-8') as file:
+            file.write(cafe_details)
+
     # Exercise:
     # Make the form write a new row into cafe-data.csv
     # with   if form.validate_on_submit()
