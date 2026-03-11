@@ -63,12 +63,12 @@ def add_cafe():
     form = CafeForm()
     if form.validate_on_submit():
         print(form.validate_on_submit())
-        cafe_details = (f"\n{form.cafe.data}, "
-                        f"{form.location_url.data}, "
-                        f"{form.open_time.data}, "
-                        f"{form.closing_time.data}, "
-                        f"{form.coffe_rating.data}, "
-                        f"{form.wifi_rating.data}, "
+        cafe_details = (f"\n{form.cafe.data},"
+                        f"{form.location_url.data},"
+                        f"{form.open_time.data},"
+                        f"{form.closing_time.data},"
+                        f"{form.coffe_rating.data},"
+                        f"{form.wifi_rating.data},"
                         f"{form.power_rating.data}")
         print(cafe_details)
         with open('cafe-data.csv', 'a', encoding='utf-8') as file:
