@@ -1,18 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Add Book</title>
-  </head>
-  <body>
-    <form action="" method="POST">
-      <label>Book Name</label>
-      <input type="text" />
-      <label>Book Author</label>
-      <input type="text" />
-      <label>Rating</label>
-      <input type="text" />
-      <button type="submit">Add Book</button>
-    </form>
-  </body>
-</html>
+{% extends 'base.html' %}
+<!--Don't forget your import here-->
+{% from 'bootstrap4/form.html' import render_form %}
+{% block title %}Add A New Cafe{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+
+      <h1>Add new Book</h1>
+
+      <!-- This is where your WTForm will go -->
+      {{ render_form(form, novalidate=True) }}
+
+      </br><a class="btn btn-warning" href="{{ url_for('home') }}" role="button">Home!</a>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
