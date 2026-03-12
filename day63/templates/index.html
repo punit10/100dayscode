@@ -6,12 +6,15 @@
   </head>
   <body>
     <h1>Fit Mind Readers</h1>
-    {% for book in all_books %}
-    <ul>
-      <li>{{ book.title }} {{ book.author }} {{ book.rating}} </li>
-    </ul>
-    {% endfor %}
-
+    {% if all_books | length == 0 %}
+        <p>No Books available.</p>
+    {% else %}
+        {% for book in all_books %}
+        <ul>
+          <li>{{ book.title }} - {{ book.author }} - {{ book.rating}}/10 </li>
+        </ul>
+        {% endfor %}
+    {% endif %}
     <a href="{{ url_for('add') }}">Add New Book</a>
   </body>
 </html>
