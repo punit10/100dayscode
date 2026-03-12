@@ -6,9 +6,11 @@
   </head>
   <body>
     <h1>Fit Mind Readers</h1>
+    {% for book in all_books %}
     <ul>
-      <li></li>
+      <li>{{ book.title }} {{ book.author }} {{ book.rating}} </li>
     </ul>
+    {% endfor %}
 
     <a href="{{ url_for('add') }}">Add New Book</a>
   </body>

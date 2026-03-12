@@ -24,25 +24,35 @@ bootstrap = Bootstrap5(app)
 
 all_books = []
 class AddBookForm(FlaskForm):
-    book = StringField('Book', validators=[DataRequired()])
+    book_title = StringField('Book', validators=[DataRequired()])
     author = StringField('Author',
                                validators=[
                                    DataRequired(),
                                ])
     rating = SelectField('Rating',
                               validators=[DataRequired()],
-                              choices=['💪', '💪💪', '💪💪💪', '💪💪💪💪', '💪💪💪💪💪'])
+                              choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     submit = SubmitField('Submit')
 
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', all_books=all_books)
 
 
 @app.route("/add", methods=['GET', 'POST'])
 def add():
     form = AddBookForm()
+    if form.validate_on_submit():
+        book_title = form.book_title.data
+        author = form.author.data
+        rating = form.rating.data
+        all_books.append({
+            'title': book_title,
+            'author': author,
+            'rating': rating
+        })
+        return render_template('index.html', all_books=all_books)
     return render_template('add.html', form=form)
 
 
