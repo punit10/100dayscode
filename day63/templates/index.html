@@ -6,7 +6,7 @@
   </head>
   <body>
     <h1>Fit Mind Readers</h1>
-    {% if all_books | length == 0 %}
+    {% if not all_books %}
         <p>No Books available.</p>
     {% else %}
         {% for book in all_books %}

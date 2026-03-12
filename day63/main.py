@@ -3,7 +3,10 @@ from flask_wtf import FlaskForm
 from flask_bootstrap import Bootstrap5
 from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired
-from flask import Markup
+import sqlite3
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Integer, String, Float
 
 '''
 Red underlines? Install the required packages first: 
@@ -21,8 +24,45 @@ This will install the packages from requirements.txt for this project.
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'very_secret_key'
 bootstrap = Bootstrap5(app)
+# db = sqlite3.connect("books-collection.db")
+# cursor = db.cursor()
+# cursor.execute("CREATE TABLE books (id INTEGER PRIMARY KEY, "
+#                "title varchar(250) NOT NULL UNIQUE, "
+#                "author varchar(250) NOT NULL, "
+#                "rating FLOAT NOT NULL)")
+# cursor.execute("INSERT INTO books VALUES(3, 'Harry Potter 2', 'J. K. Rowling', '9.3')")
+# db.commit()
 
 all_books = []
+
+class Base(DeclarativeBase):
+  pass
+
+db = SQLAlchemy(model_class=Base)
+# configure the SQLite database, relative to the app instance folder
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///new-books-collection.db"
+# initialize the app with the extension
+db.init_app(app)
+
+class Books(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    title: Mapped[str] = mapped_column(String(250), nullable=False)
+    author: Mapped[str] = mapped_column(String(250), nullable=False)
+    rating: Mapped[float] = mapped_column(Float, nullable=False)
+
+    def __init__(self, title, author, rating):
+        self.title = title
+        self.author = author
+        self.rating = rating
+
+with app.app_context():
+    db.create_all()
+
+# with app.app_context():
+#     new_book = Books(title="Maths", author="R. D sharma", rating=8.3)
+#     db.session.add(new_book)
+#     db.session.commit()
+
 class AddBookForm(FlaskForm):
     book_title = StringField('Book', validators=[DataRequired()])
     author = StringField('Author',
@@ -37,7 +77,8 @@ class AddBookForm(FlaskForm):
 
 @app.route('/')
 def home():
-    return render_template('index.html', all_books=all_books)
+    books = db.session.execute(db.select(Books).order_by(Books.id)).scalars()
+    return render_template('index.html', all_books=books)
 
 
 @app.route("/add", methods=['GET', 'POST'])
@@ -47,12 +88,20 @@ def add():
         book_title = form.book_title.data
         author = form.author.data
         rating = form.rating.data
+        #dict for all book which is not used now!
         all_books.append({
             'title': book_title,
             'author': author,
             'rating': rating
         })
-        return render_template('index.html', all_books=all_books)
+        new_book = Books(
+            title=book_title,
+            author=author,
+            rating=rating
+        )
+        db.session.add(new_book)
+        db.session.commit()
+        return redirect(url_for('home'))
     return render_template('add.html', form=form)
 
 
