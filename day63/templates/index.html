@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Fit Mind Readers</title>
-  </head>
-  <body>
+{% extends 'base.html' %}
+<!--Don't forget your import here-->
+{% block title %} Fit Mind Readers {% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
     <h1>Fit Mind Readers</h1>
+    <div class="col-sm-12 col-md-8">
     {% if not all_books %}
         <p>No Books available.</p>
     {% else %}
@@ -15,6 +16,8 @@
         </ul>
         {% endfor %}
     {% endif %}
-    <a href="{{ url_for('add') }}">Add New Book</a>
-  </body>
-</html>
+    <a class="btn btn-success" href="{{ url_for('add') }}">Add New Book</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
