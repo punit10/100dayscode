@@ -74,6 +74,12 @@ class AddBookForm(FlaskForm):
                               choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     submit = SubmitField('Submit')
 
+class EditBookRatingForm(FlaskForm):
+    rating = SelectField('Select New Rating',
+                              validators=[DataRequired()],
+                              choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    submit = SubmitField('Submit')
+
 
 @app.route('/')
 def home():
@@ -104,6 +110,21 @@ def add():
         return redirect(url_for('home'))
     return render_template('add.html', form=form)
 
+@app.route("/edit/<int:book_id>", methods=['GET', 'POST'])
+# @app.route("/edit", methods=["GET", "POST"])
+def edit(book_id):
+    form = EditBookRatingForm()
+    if form.validate_on_submit():
+        #UPDATE RECORD
+        print(book_id)
+        book_to_update = db.get_or_404(Books, book_id)
+        book_to_update.rating = float(form.rating.data)
+        db.session.commit()
+        return redirect(url_for('home'))
+    book_selected = db.get_or_404(Books, book_id)
+    return render_template("edit_rating.html",
+                           form=form,
+                           book_selected=book_selected)
 
 if __name__ == "__main__":
     app.run(debug=True)
