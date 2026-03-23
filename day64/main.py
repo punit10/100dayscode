@@ -88,11 +88,14 @@ second_movie = Movie(
     img_url="https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg"
 )
 
+# with app.app_context():
+#     db.session.add(new_movie)
+#     db.session.commit()
+
 @app.route("/")
 def home():
     movies = db.session.execute(db.select(Movie).order_by(Movie.id)).scalars()
-    print(movies)
-    return render_template("index.html", movies=movies)
+    return render_template("index.html", all_movies=movies)
 
 
 if __name__ == '__main__':
