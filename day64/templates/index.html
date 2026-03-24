@@ -13,11 +13,11 @@
     {% for movie in all_movies %}
       <div class="card" >
         <div class="front" style="background-image: url({{ movie.img_url }});">
-            <p class="large">{{ loop.index }}</p>
+            <p class="large">{{ movie.ranking }}</p>
         </div>
         <div class="back">
             <div>
-                <div class="title">{{ movie.title }}<span class="release_date">{{ movie.year }}</span>
+                <div class="title">{{ movie.title }}<span class="release_date"> ({{ movie.year }})</span>
                 </div>
                 <div class="rating">
                   <label>{{ movie.rating }}</label>
@@ -26,7 +26,7 @@
                 <p class="review">{{ movie.review }}</p>
                 <p class="overview">{{ movie.description }}</p>
 
-                <a href="#" class="button">Update</a>
+                <a href="{{ url_for('edit', movie_id=movie.id) }}" class="button">Update</a>
                 <a href="#" class="button delete-button">Delete</a>
             </div>
         </div>

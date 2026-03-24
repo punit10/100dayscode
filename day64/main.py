@@ -4,8 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Float
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, FloatField, SubmitField
+from wtforms.validators import DataRequired, InputRequired
 import requests
 
 '''
@@ -92,11 +92,35 @@ second_movie = Movie(
 #     db.session.add(new_movie)
 #     db.session.commit()
 
+class EditMovieRatingForm(FlaskForm):
+    rating = FloatField('Rating',
+                        validators=[InputRequired()])
+    review = StringField('Review',
+                         validators=[InputRequired()])
+    submit = SubmitField('Submit')
+
+
 @app.route("/")
 def home():
     movies = db.session.execute(db.select(Movie).order_by(Movie.id)).scalars()
     return render_template("index.html", all_movies=movies)
 
+
+@app.route("/edit/<int:movie_id>", methods=["GET", "POST"])
+def edit(movie_id):
+    form = EditMovieRatingForm()
+    selected_movie = db.get_or_404(Movie, movie_id)
+    if form.validate_on_submit():
+        rating = form.rating.data
+        review = form.review.data
+        # get movie obj and update it with new fields
+        selected_movie.rating = float(rating)
+        selected_movie.review = review
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template("edit.html",
+                           form=form,
+                           selected_movie=selected_movie)
 
 if __name__ == '__main__':
     app.run(debug=True)
