@@ -4,8 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Float
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, SubmitField
-from wtforms.validators import DataRequired, InputRequired
+from wtforms import StringField, FloatField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, InputRequired, Length
 import requests
 
 '''
@@ -92,6 +92,23 @@ second_movie = Movie(
 #     db.session.add(new_movie)
 #     db.session.commit()
 
+class AddMovieForm(FlaskForm):
+    title = StringField('Title',
+                        validators=[InputRequired()])
+    year = StringField('Year',
+                       validators=[InputRequired()])
+    description = TextAreaField('Description',
+                              validators=[InputRequired(),
+                                          Length(min=4, max=1000)])
+    rating = FloatField('Rating',
+                        validators=[InputRequired()])
+    ranking =FloatField('Ranking',
+                        validators=[InputRequired()])
+    review = StringField('Review')
+    img_url = StringField('Image URL',
+                          validators=[InputRequired()])
+    submit = SubmitField('Add Movie')
+
 class EditMovieRatingForm(FlaskForm):
     rating = FloatField('Rating',
                         validators=[InputRequired()])
@@ -104,6 +121,24 @@ class EditMovieRatingForm(FlaskForm):
 def home():
     movies = db.session.execute(db.select(Movie).order_by(Movie.id)).scalars()
     return render_template("index.html", all_movies=movies)
+
+@app.route("/add", methods=["GET", "POST"])
+def add_movie():
+    form = AddMovieForm()
+    if form.validate_on_submit():
+        new_movie_details = Movie(
+            title=form.title.data,
+            year=form.year.data,
+            description=form.description.data,
+            rating=form.rating.data,
+            ranking=form.ranking.data,
+            review=form.review.data,
+            img_url=form.img_url.data,
+        )
+        db.session.add(new_movie_details)
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template("add.html", form=form)
 
 
 @app.route("/edit/<int:movie_id>", methods=["GET", "POST"])
