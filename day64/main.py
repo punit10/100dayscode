@@ -122,5 +122,12 @@ def edit(movie_id):
                            form=form,
                            selected_movie=selected_movie)
 
+@app.route("/delete/<int:movie_id>", methods=["GET", "POST"])
+def delete(movie_id):
+    selected_movie = db.get_or_404(Movie, movie_id)
+    db.session.delete(selected_movie)
+    db.session.commit()
+    return redirect(url_for('home'))
+
 if __name__ == '__main__':
     app.run(debug=True)
