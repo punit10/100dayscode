@@ -8,12 +8,12 @@
   <h1 class="heading">My Top 10 Movies </h1>
   <p class="description">These are my all-time favourite movies.</p>
   {% if not all_movies %}
-    <p class="description">No Books available.</p>
+    <p class="description">No Movies available.</p>
   {% else %}
     {% for movie in all_movies %}
       <div class="card" >
         <div class="front" style="background-image: url({{ movie.img_url }});">
-            <p class="large">{{ movie.ranking }}</p>
+            <p class="large">{{ all_movies|length - loop.index0  }}</p>
         </div>
         <div class="back">
             <div>

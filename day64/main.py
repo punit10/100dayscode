@@ -153,7 +153,7 @@ def get_movie_details(movie_id):
 
 @app.route("/")
 def home():
-    movies = db.session.execute(db.select(Movie).order_by(Movie.id)).scalars()
+    movies = db.session.execute(db.select(Movie).order_by(Movie.rating)).scalars().all()
     return render_template("index.html", all_movies=movies)
 
 @app.route("/add", methods=["GET", "POST"])
