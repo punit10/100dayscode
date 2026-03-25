@@ -27,6 +27,7 @@ Bootstrap5(app)
 
 # CREATE DB
 all_movies = []
+MOVIE_API_KEY = "api_key"
 
 class Base(DeclarativeBase):
   pass
@@ -116,10 +117,10 @@ class EditMovieRatingForm(FlaskForm):
                          validators=[InputRequired()])
     submit = SubmitField('Submit')
 
-def get_movie(movie_title):
+def find_movie(movie_title):
     url = "https://api.themoviedb.org/3/search/movie"
     parameters = {
-        "api_key": "",
+        "api_key": MOVIE_API_KEY,
         "query": movie_title,
         "include_adult": False,
         "language": "en - US",
@@ -134,7 +135,21 @@ def get_movie(movie_title):
                             verify=False)
     # print(data)
     return response.json()["results"]
-# get_movie("avatar")
+
+def get_movie_details(movie_id):
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}"
+    parameters = {
+        "api_key": MOVIE_API_KEY,
+    }
+    headers = {
+        "accept": "application/json",
+    }
+    response = requests.get(url,
+                            headers=headers,
+                            params=parameters,
+                            verify=False)
+    return response.json()
+# get_movie_details(19995)
 
 @app.route("/")
 def home():
@@ -146,7 +161,7 @@ def add_movie():
     form = FindMovieForm()
     if form.validate_on_submit():
         movie_title = form.title.data
-        movie_data = get_movie(movie_title)  # get movie using api
+        movie_data = find_movie(movie_title)  # get movie using api
 
         # new_movie_details = Movie(
         #     title=form.title.data,
@@ -163,6 +178,24 @@ def add_movie():
 
         return render_template("select.html", options=movie_data)
     return render_template("add.html", form=form)
+
+
+@app.route("/select_movie/<int:movie_id>", methods=["GET", "POST"])
+def select_movie(movie_id):
+    movie_details = get_movie_details(movie_id)
+    movie_db_image_url = "https://image.tmdb.org/t/p/w500"
+    new_movie_details = Movie(
+        title=movie_details["original_title"],
+        year=movie_details["release_date"][0:4],
+        description=movie_details["overview"],
+        rating=0.0,
+        ranking=movie_details["vote_average"],
+        review="",
+        img_url=f"{movie_db_image_url}{movie_details['poster_path']}",
+    )
+    db.session.add(new_movie_details)
+    db.session.commit()
+    return redirect(url_for('home'))
 
 
 @app.route("/edit/<int:movie_id>", methods=["GET", "POST"])
