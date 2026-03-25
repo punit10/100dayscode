@@ -27,7 +27,6 @@ Bootstrap5(app)
 
 # CREATE DB
 all_movies = []
-MOVIE_API_KEY = "api_key"
 
 class Base(DeclarativeBase):
   pass
@@ -37,6 +36,15 @@ db = SQLAlchemy(model_class=Base)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///new-movies-collection.db"
 # initialize the app with the extension
 db.init_app(app)
+
+SEARCH_MOVIE_URL = "https://api.themoviedb.org/3/search/movie"
+MOVIE_DETAILS_URL = "https://api.themoviedb.org/3/movie"
+MOVIE_DB_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
+MOVIE_API_KEY = "api_key"
+MOVIE_LANG="en - US"
+headers = {
+    "accept": "application/json",
+}
 
 # CREATE TABLE
 class Movie(db.Model):
@@ -111,25 +119,21 @@ class FindMovieForm(FlaskForm):
     submit = SubmitField('Search Movie')
 
 class EditMovieRatingForm(FlaskForm):
-    rating = FloatField('Rating',
+    rating = FloatField('Rating out of 10',
                         validators=[InputRequired()])
-    review = StringField('Review',
+    review = StringField('Write your Review',
                          validators=[InputRequired()])
     submit = SubmitField('Submit')
 
 def find_movie(movie_title):
-    url = "https://api.themoviedb.org/3/search/movie"
     parameters = {
         "api_key": MOVIE_API_KEY,
         "query": movie_title,
         "include_adult": False,
-        "language": "en - US",
+        "language": MOVIE_LANG,
         "page": 1
     }
-    headers = {
-        "accept": "application/json",
-    }
-    response = requests.get(url,
+    response = requests.get(SEARCH_MOVIE_URL,
                             headers=headers,
                             params=parameters,
                             verify=False)
@@ -137,14 +141,10 @@ def find_movie(movie_title):
     return response.json()["results"]
 
 def get_movie_details(movie_id):
-    url = f"https://api.themoviedb.org/3/movie/{movie_id}"
     parameters = {
         "api_key": MOVIE_API_KEY,
     }
-    headers = {
-        "accept": "application/json",
-    }
-    response = requests.get(url,
+    response = requests.get(f"{MOVIE_DETAILS_URL}/{movie_id}",
                             headers=headers,
                             params=parameters,
                             verify=False)
@@ -183,7 +183,6 @@ def add_movie():
 @app.route("/select_movie/<int:movie_id>", methods=["GET", "POST"])
 def select_movie(movie_id):
     movie_details = get_movie_details(movie_id)
-    movie_db_image_url = "https://image.tmdb.org/t/p/w500"
     new_movie_details = Movie(
         title=movie_details["original_title"],
         year=movie_details["release_date"][0:4],
@@ -191,11 +190,13 @@ def select_movie(movie_id):
         rating=0.0,
         ranking=movie_details["vote_average"],
         review="",
-        img_url=f"{movie_db_image_url}{movie_details['poster_path']}",
+        img_url=f"{MOVIE_DB_IMAGE_URL}{movie_details['poster_path']}",
     )
     db.session.add(new_movie_details)
     db.session.commit()
-    return redirect(url_for('home'))
+    new_movie_id = new_movie_details.id
+    # redirect to /edit route
+    return redirect(url_for('edit', movie_id=new_movie_id))
 
 
 @app.route("/edit/<int:movie_id>", methods=["GET", "POST"])
