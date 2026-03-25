@@ -92,22 +92,22 @@ second_movie = Movie(
 #     db.session.add(new_movie)
 #     db.session.commit()
 
-class AddMovieForm(FlaskForm):
+class FindMovieForm(FlaskForm):
     title = StringField('Title',
                         validators=[InputRequired()])
-    year = StringField('Year',
-                       validators=[InputRequired()])
-    description = TextAreaField('Description',
-                              validators=[InputRequired(),
-                                          Length(min=4, max=1000)])
-    rating = FloatField('Rating',
-                        validators=[InputRequired()])
-    ranking =FloatField('Ranking',
-                        validators=[InputRequired()])
-    review = StringField('Review')
-    img_url = StringField('Image URL',
-                          validators=[InputRequired()])
-    submit = SubmitField('Add Movie')
+    # year = StringField('Year',
+    #                    validators=[InputRequired()])
+    # description = TextAreaField('Description',
+    #                           validators=[InputRequired(),
+    #                                       Length(min=4, max=1000)])
+    # rating = FloatField('Rating',
+    #                     validators=[InputRequired()])
+    # ranking =FloatField('Ranking',
+    #                     validators=[InputRequired()])
+    # review = StringField('Review')
+    # img_url = StringField('Image URL',
+    #                       validators=[InputRequired()])
+    submit = SubmitField('Search Movie')
 
 class EditMovieRatingForm(FlaskForm):
     rating = FloatField('Rating',
@@ -116,6 +116,25 @@ class EditMovieRatingForm(FlaskForm):
                          validators=[InputRequired()])
     submit = SubmitField('Submit')
 
+def get_movie(movie_title):
+    url = "https://api.themoviedb.org/3/search/movie"
+    parameters = {
+        "api_key": "",
+        "query": movie_title,
+        "include_adult": False,
+        "language": "en - US",
+        "page": 1
+    }
+    headers = {
+        "accept": "application/json",
+    }
+    response = requests.get(url,
+                            headers=headers,
+                            params=parameters,
+                            verify=False)
+    # print(data)
+    return response.json()["results"]
+# get_movie("avatar")
 
 @app.route("/")
 def home():
@@ -124,20 +143,25 @@ def home():
 
 @app.route("/add", methods=["GET", "POST"])
 def add_movie():
-    form = AddMovieForm()
+    form = FindMovieForm()
     if form.validate_on_submit():
-        new_movie_details = Movie(
-            title=form.title.data,
-            year=form.year.data,
-            description=form.description.data,
-            rating=form.rating.data,
-            ranking=form.ranking.data,
-            review=form.review.data,
-            img_url=form.img_url.data,
-        )
-        db.session.add(new_movie_details)
-        db.session.commit()
-        return redirect(url_for('home'))
+        movie_title = form.title.data
+        movie_data = get_movie(movie_title)  # get movie using api
+
+        # new_movie_details = Movie(
+        #     title=form.title.data,
+        #     year=form.year.data,
+        #     description=form.description.data,
+        #     rating=form.rating.data,
+        #     ranking=form.ranking.data,
+        #     review=form.review.data,
+        #     img_url=form.img_url.data,
+        # )
+        # db.session.add(new_movie_details)
+        # db.session.commit()
+        # return redirect(url_for('home'))
+
+        return render_template("select.html", options=movie_data)
     return render_template("add.html", form=form)
 
 
