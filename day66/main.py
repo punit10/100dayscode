@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Boolean
+from sqlalchemy import Integer, String, Boolean, select
 import random
 
 '''
@@ -52,7 +52,7 @@ def home():
     all_cafe = Cafe.query.all()
     return render_template("index.html", all_cafe=all_cafe)
 
-@app.route("/random")
+@app.route("/random", methods=["GET"])
 def get_random_cafe():
     all_cafes = Cafe.query.all()
     random_cafe = random.choice(all_cafes)
@@ -69,29 +69,54 @@ def get_random_cafe():
         "can_take_calls": random_cafe.can_take_calls,
         "coffee_price": random_cafe.coffee_price,
     }
-    return jsonify(cafe)
+    cafe_dictionary= {"cafe": cafe}
+    return jsonify(cafe_dictionary)
 
 # HTTP GET - Read Record
-@app.route("/all")
+@app.route("/all", methods=["GET"])
 def get_all_cafe():
     all_cafes = Cafe.query.all()
-    cafe_list = []
-    for random_cafe in all_cafes:
-        cafe={
-            "id": random_cafe.id,
-            "name": random_cafe.name,
-            "map_url": random_cafe.map_url,
-            "img_url": random_cafe.img_url,
-            "location": random_cafe.location,
-            "seats": random_cafe.seats,
-            "has_toilet": random_cafe.has_toilet,
-            "has_wifi": random_cafe.has_wifi,
-            "has_sockets": random_cafe.has_sockets,
-            "can_take_calls": random_cafe.can_take_calls,
-            "coffee_price": random_cafe.coffee_price,
+    dict_all_cafes = {"cafes": []}
+    for cafe in all_cafes:
+        new_cafe = {
+            "id": cafe.id,
+            "name": cafe.name,
+            "map_url": cafe.map_url,
+            "img_url": cafe.img_url,
+            "location": cafe.location,
+            "seats": cafe.seats,
+            "has_toilet": cafe.has_toilet,
+            "has_wifi": cafe.has_wifi,
+            "has_sockets": cafe.has_sockets,
+            "can_take_calls": cafe.can_take_calls,
+            "coffee_price": cafe.coffee_price,
         }
-        cafe_list.append(cafe)
-    return jsonify(cafe_list)
+        dict_all_cafes["cafes"].append(new_cafe)
+    return jsonify(dict_all_cafes)
+
+# Get Via search keyward
+# /search?name=Science
+@app.route("/search", methods=["GET"])
+def get_cafe_by_search():
+    location = request.args.get("loc")
+    selected_cafes=Cafe.query.filter(Cafe.location.ilike(f"%{location}%")).all()
+    cafe_dictionary = {"cafes": []}
+    for cafe in selected_cafes:
+        new_cafe={
+            "id": cafe.id,
+            "name": cafe.name,
+            "map_url": cafe.map_url,
+            "img_url": cafe.img_url,
+            "location": cafe.location,
+            "seats": cafe.seats,
+            "has_toilet": cafe.has_toilet,
+            "has_wifi": cafe.has_wifi,
+            "has_sockets": cafe.has_sockets,
+            "can_take_calls": cafe.can_take_calls,
+            "coffee_price": cafe.coffee_price,
+        }
+        cafe_dictionary["cafes"].append(new_cafe)
+    return jsonify(cafe_dictionary)
 
 # HTTP POST - Create Record
 
