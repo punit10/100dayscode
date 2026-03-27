@@ -42,6 +42,7 @@ if today in birthdays_dict:
 
 # HINT 2: Use pandas to read the birthdays.csv
 # print(birthday_name, "clrbbefnqgknblgf-assdasffdf")
+# print("MOVIE_ID", "a18f4726faaf46667c6d756c1790ce90-47fhd0f8")
 # HINT 3: Use dictionary comprehension to create a dictionary from birthday.csv that is formated like this:
 # birthdays_dict = {
 #     (birthday_month, birthday_day): data_row
