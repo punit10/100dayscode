@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Boolean
+import random
 
 '''
 Install the required packages first: 
@@ -48,10 +49,49 @@ with app.app_context():
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    all_cafe = Cafe.query.all()
+    return render_template("index.html", all_cafe=all_cafe)
 
+@app.route("/random")
+def get_random_cafe():
+    all_cafes = Cafe.query.all()
+    random_cafe = random.choice(all_cafes)
+    cafe={
+        "id": random_cafe.id,
+        "name": random_cafe.name,
+        "map_url": random_cafe.map_url,
+        "img_url": random_cafe.img_url,
+        "location": random_cafe.location,
+        "seats": random_cafe.seats,
+        "has_toilet": random_cafe.has_toilet,
+        "has_wifi": random_cafe.has_wifi,
+        "has_sockets": random_cafe.has_sockets,
+        "can_take_calls": random_cafe.can_take_calls,
+        "coffee_price": random_cafe.coffee_price,
+    }
+    return jsonify(cafe)
 
 # HTTP GET - Read Record
+@app.route("/all")
+def get_all_cafe():
+    all_cafes = Cafe.query.all()
+    cafe_list = []
+    for random_cafe in all_cafes:
+        cafe={
+            "id": random_cafe.id,
+            "name": random_cafe.name,
+            "map_url": random_cafe.map_url,
+            "img_url": random_cafe.img_url,
+            "location": random_cafe.location,
+            "seats": random_cafe.seats,
+            "has_toilet": random_cafe.has_toilet,
+            "has_wifi": random_cafe.has_wifi,
+            "has_sockets": random_cafe.has_sockets,
+            "can_take_calls": random_cafe.can_take_calls,
+            "coffee_price": random_cafe.coffee_price,
+        }
+        cafe_list.append(cafe)
+    return jsonify(cafe_list)
 
 # HTTP POST - Create Record
 
