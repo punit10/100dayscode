@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -22,8 +22,8 @@ posts: list[dict] =[
      "date_posted": "April 01, 2025"
      },
 ]
-@app.get("/")
-@app.get("/posts", include_in_schema=False)
+@app.get("/", name="home")
+@app.get("/posts", include_in_schema=False, name="posts")
 def home(request: Request):
     return templates.TemplateResponse(request,
                                       "index.html",
@@ -33,6 +33,12 @@ def home(request: Request):
 def get_posts():
     return posts
 
+@app.get("/api/posts/{post_id}")
+def get_post(post_id: int):
+    for post in posts:
+        if post.get("id") == post_id:
+            return post
+    return {"error": "Post not found"}
 
 # pip install "fastapi[standard]"
 # for dev env with auto load and debug
