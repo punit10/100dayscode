@@ -1,0 +1,6 @@
+# dotenv
+.env
+
+# database files
+*.sqlite3
+*.db
