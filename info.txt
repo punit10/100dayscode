@@ -1,0 +1,9 @@
+# To run the app
+# pip install "fastapi[standard]"
+# (for dev env with auto load and debug)
+# fastapi dev main.py
+# (for prod setup more optimised and fast)
+# fastapi run main.py
+# to work with async await need to install
+# pip install aiosqlite
+# pip install greenlet
