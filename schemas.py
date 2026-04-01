@@ -17,14 +17,19 @@ class UserResponse(UserBase):
     image_file: str | None
     image_path: str
 
+
 class PostBase(BaseModel):
     title: str = Field(min_length=1, max_length=100)
     content: str = Field(min_length=1)
 
 
-
 class PostCreate(PostBase):
     user_id: int  # TEMPORARY
+
+
+class PostUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=100)
+    content: str | None = Field(default=None, min_length=1)
 
 
 class PostResponse(PostBase):

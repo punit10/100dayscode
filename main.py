@@ -10,7 +10,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 import models
 from database import Base, engine, get_db
-from schemas import PostCreate, PostResponse, UserCreate, UserResponse
+from schemas import PostCreate, PostResponse, PostUpdate, UserCreate, UserResponse
 
 Base.metadata.create_all(bind=engine)
 
@@ -21,20 +21,21 @@ app.mount("/media", StaticFiles(directory="media"), name="media")
 
 templates = Jinja2Templates(directory="templates")
 
-posts: list[dict] =[
-    {"id":1,
-     "author": "Punit Sharma",
-     "title": "Fast api is easy to learn",
-     "content": "This framework is easy to learn and super fast",
-     "date_posted": "April 01, 2025"
-     },
-    {"id":2,
-     "author": "John Doe",
-     "title": "Python is awesome",
-     "content": "Python is a great language and web development is easy with it ",
-     "date_posted": "April 01, 2025"
-     },
-]
+# posts: list[dict] =[
+#     {"id":1,
+#      "author": "Punit Sharma",
+#      "title": "Fast api is easy to learn",
+#      "content": "This framework is easy to learn and super fast",
+#      "date_posted": "April 01, 2025"
+#      },
+#     {"id":2,
+#      "author": "John Doe",
+#      "title": "Python is awesome",
+#      "content": "Python is a great language and web development is easy with it ",
+#      "date_posted": "April 01, 2025"
+#      },
+# ]
+
 @app.get("/", name="home")
 @app.get("/posts", include_in_schema=False, name="posts")
 def home(request: Request, db: Annotated[Session, Depends(get_db)]):
@@ -140,6 +141,7 @@ def get_user_posts(user_id: int, db: Annotated[Session, Depends(get_db)]):
     return posts
 
 
+# routes for Posts
 @app.get("/api/posts", response_model=list[PostResponse])
 def get_posts(db: Annotated[Session, Depends(get_db)]):
     result = db.execute(select(models.Post))
@@ -179,13 +181,68 @@ def get_post(post_id: int, db: Annotated[Session, Depends(get_db)]):
         return post
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
 
+@app.put("/api/posts/{post_id}",
+         response_model=PostResponse)
+def update_post_full(post_id: int,
+                     post_data: PostCreate,
+                     db: Annotated[Session, Depends(get_db)],
+                     ):
+    result = db.execute(select(models.Post).where(models.Post.id == post_id))
+    post = result.scalars().first()
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+    if post_data.user_id != post.user_id:
+        result = db.execute(select(models.User).where(models.User.id == post_data.user_id))
+        user = result.scalars().first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+    # if post and user checks passed, update the post with new details
+    post.title = post_data.title
+    post.content = post_data.content
+    post.user_id = post_data.user_id
+    # will not change the ownership, i.e. user id will be the same as before
+    # post.user_id = post.user_id
 
-# pip install "fastapi[standard]"
-# for dev env with auto load and debug
-# fastapi dev main.py
-# for prod setup more optimised and fast
-# fastapi run main.py
+    db.commit()
+    db.refresh(post)
+    return post
 
+
+@app.patch("/api/posts/{post_id}",
+         response_model=PostResponse)
+def update_post_partial(post_id: int,
+                     post_data: PostUpdate,
+                     db: Annotated[Session, Depends(get_db)],
+                     ):
+    result = db.execute(select(models.Post).where(models.Post.id == post_id))
+    post = result.scalars().first()
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+    updated_post = post_data.model_dump(exclude_unset=True)
+    for field, value in updated_post.items():
+        setattr(post, field, value)
+    db.commit()
+    db.refresh(post)
+    return post
+
+
+@app.delete("/api/posts/{post_id}",
+         status_code=status.HTTP_204_NO_CONTENT)
+def delete_post(post_id: int,
+                     db: Annotated[Session, Depends(get_db)],
+                     ):
+    result = db.execute(select(models.Post).where(models.Post.id == post_id))
+    post = result.scalars().first()
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+    db.delete(post)
+    db.commit()
+
+
+# Exception Handlers
 @app.exception_handler(StarletteHTTPException)
 def general_http_exception_handler(request: Request, exception: StarletteHTTPException):
     message = (
@@ -230,3 +287,10 @@ def validation_exception_handler(request: Request, exception: RequestValidationE
         },
         status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
     )
+
+# To run the app
+# pip install "fastapi[standard]"
+# (for dev env with auto load and debug)
+# fastapi dev main.py
+# (for prod setup more optimised and fast)
+# fastapi run main.py
