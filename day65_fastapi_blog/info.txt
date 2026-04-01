@@ -7,3 +7,9 @@
 # to work with async await need to install
 # pip install aiosqlite
 # pip install greenlet
+
+# Part 10 Authentication
+#orgon2 is best practice and modern
+pip install "pwdlib[argon2]"
+pip install pyjwt
+pip install pydantic-settings
