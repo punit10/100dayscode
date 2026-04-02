@@ -37,7 +37,8 @@ class PostBase(BaseModel):
 
 
 class PostCreate(PostBase):
-    user_id: int  # TEMPORARY
+    # user_id: int  # now user_id taken from logged-in user at post create,
+    pass
 
 
 class PostUpdate(BaseModel):
