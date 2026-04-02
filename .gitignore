@@ -9,3 +9,4 @@
 # database files
 *.sqlite3
 *.db
+**/*media/*
