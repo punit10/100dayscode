@@ -13,3 +13,6 @@
 pip install "pwdlib[argon2]"
 pip install pyjwt
 pip install pydantic-settings
+
+# Part 12 Image upload
+pip install pillow
