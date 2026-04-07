@@ -20,3 +20,9 @@ pip install pillow
 # Part 15 Password reset
 # for async in place of smtplib to work with async
 pip install aiosmtplib
+
+# to test dummy email sender
+logon to https://mailtrap.io/
+> create account
+> and get email username and pass
+> then put those in configuration to test
