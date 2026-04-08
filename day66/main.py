@@ -94,8 +94,8 @@ def get_all_cafe():
         dict_all_cafes["cafes"].append(new_cafe)
     return jsonify(dict_all_cafes)
 
-# Get Via search keyward
-# /search?name=Science
+# Get Via search
+# /search?loc=London
 @app.route("/search", methods=["GET"])
 def get_cafe_by_search():
     location = request.args.get("loc")
@@ -119,7 +119,22 @@ def get_cafe_by_search():
     return jsonify(cafe_dictionary)
 
 # HTTP POST - Create Record
+@app.route("/add", methods=["GET", "POST"])
+def add_cafe():
+    name = request.args.get("name")
+    map_url = request.args.get("map_url")
+    img_url = request.args.get("img_url")
+    location = request.args.get("loc")
+    seats = request.args.get("seats")
+    has_toilet = request.args.get("has_toilet")
+    has_wifi = request.args.get("has_wifi")
+    has_sockets = request.args.get("has_sockets")
+    can_take_calls = request.args.get("can_take_calls")
 
+    return f"{name} {map_url}"
+    return jsonify(cafe_dictionary)
+
+# name=angel priya cafe&map_url=google.com
 # HTTP PUT/PATCH - Update Record
 
 # HTTP DELETE - Delete Record
