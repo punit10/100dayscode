@@ -192,7 +192,9 @@ async def reset_password(
         )
 
     ## tzinfo is for sqlite to compare UTC, will get remove in postgres
-    if reset_token.expires_at.replace(tzinfo=UTC) < datetime.now(UTC):
+    ## removed in postgres
+    # if reset_token.expires_at.replace(tzinfo=UTC) < datetime.now(UTC):
+    if reset_token.expires_at < datetime.now(UTC):
         await db.delete(reset_token)
         await db.commit()
         raise HTTPException(

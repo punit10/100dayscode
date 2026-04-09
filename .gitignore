@@ -11,3 +11,4 @@
 *.db
 **/*media/*
 **/populate_db.py
+**/alembic_dir/versions/*
