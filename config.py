@@ -7,6 +7,9 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
     )
 
+    # to use postgresql
+    database_url: str
+
     # secret_key will get from .env variable SECRET_KEY
     secret_key: SecretStr
     algorithm: str = 'HS256'

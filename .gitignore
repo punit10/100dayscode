@@ -1,6 +1,13 @@
+**/*.pyc
+.idea/*
+**/__pycache__/*.pyc
+**/*.db
+
 # dotenv
 .env
 
 # database files
 *.sqlite3
 *.db
+**/*media/*
+**/populate_db.py
