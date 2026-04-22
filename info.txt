@@ -34,6 +34,33 @@ logon to https://mailtrap.io/
 pip install "psycopg[binary]"
 
 # creating and install postgres using aws RDS here for now
+# Steps to create rds instance postgres engine
+Go to VPC → Subnets
+Filter by VPC = the SAME VPC you’ll use
+✅ Public subnet checklist:
+Route table has:
+0.0.0.0/0 → igw-xxxx
+
+Pick 2 subnets in different AZs
+Example:
+subnet-111 (ap-south-1a)
+subnet-222 (ap-south-1b)
+
+RDS → Subnet groups → Create
+Name fastapi-public-subnet-group
+VPC✅ SAME VPC as subnets
+Subnets ✅ Only PUBLIC subnets
+AZs✅ At least 2
+
+RDS → Create Database
+Public access ✅ YES
+Subnet group ✅ fastapi-public-subnet-group
+Security group ✅ allow 5432
+
+Step 5: Security Group inbound
+PostgreSQL 5432 My IP
+Then test connection with test db DONE!
+
 
 # using alembic for database migration
 pip install alembic
@@ -59,6 +86,7 @@ alembic current
 alembic revision --autogenerate -m "Added likes field to post schema"
 alembic upgrade head
 alembic current
+alembic history
 
 # in case of any issue, can roll back to previous version
 alembic downgrade -1
