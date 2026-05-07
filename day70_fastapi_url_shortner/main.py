@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, status, Path
+from fastapi import FastAPI, HTTPException, status, Path, Query
 from pydantic import BaseModel, HttpUrl, field_validator
 import random
 import string
@@ -37,6 +37,25 @@ def create_short_logic(long_url: str):
         "visits": 0
     }
     return {"short_url": f"{BASE_URL}/{short_code}"}
+
+
+@app.get("/")
+def home():
+    return {
+        "message": "Welcome to URL Shortener API. Use POST /short?long_url= to create short URLs."
+    }
+
+@app.get("/short")
+def create_short_url_get(long_url: str = Query(...)):
+    # validation
+    if not (long_url.startswith("http://") or long_url.startswith("https://")):
+        raise HTTPException(
+            status_code=400,
+            detail="URL must start with http:// or https://"
+        )
+
+    return create_short_logic(long_url)
+
 
 # ✅ OPTION 1: Request body
 @app.post("/", status_code=status.HTTP_201_CREATED)
